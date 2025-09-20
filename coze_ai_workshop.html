@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>字节跳动扣子 AI 工坊 - 智启未来校园实践营</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  
+  :root {
+    --primary-blue: #00d4ff;
+    --secondary-cyan: #00ffff;
+    --accent-purple: #8b5cf6;
+    --accent-pink: #ec4899;
+    --accent-green: #10b981;
+    --bg-dark: #0a0a0f;
+    --bg-card: #111827;
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --border-glow: rgba(0, 212, 255, 0.3);
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  /* 动态粒子背景 */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.15), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15), transparent 40%),
+      radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.1), transparent 30%);
+    animation: particle-float 25s infinite ease-in-out;
+    pointer-events: none;
+    z-index: -2;
+  }
+
+  /* 网格背景 */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: grid-move 30s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @keyframes particle-float {
+    0%, 100% { 
+      background-position: 0% 0%, 100% 100%, 50% 50%; 
+      filter: hue-rotate(0deg);
+    }
+    33% { 
+      background-position: 30% 70%, 70% 30%, 80% 20%; 
+      filter: hue-rotate(120deg);
+    }
+    66% { 
+      background-position: 70% 30%, 30% 70%, 20% 80%; 
+      filter: hue-rotate(240deg);
+    }
+  }
+
+  @keyframes grid-move {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1300px;
+    margin: 50px auto;
+    padding: 50px;
+    box-sizing: border-box;
+    background: 
+      linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%),
+      radial-gradient(circle at 30% 30%, rgba(0, 212, 255, 0.1), transparent 50%),
+      radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.08), transparent 50%);
+    border-radius: 32px;
+    box-shadow: 
+      0 25px 80px rgba(0, 0, 0, 0.8),
+      0 0 0 1px rgba(0, 212, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    position: relative;
+    backdrop-filter: blur(20px);
+    transform: perspective(1200px) rotateX(0deg) rotateY(0deg);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideIn 0.8s ease-out;
+  }
+
+  .slide:hover {
+    transform: perspective(1200px) rotateX(0.5deg) rotateY(0.5deg) scale(1.01);
+    box-shadow: 
+      0 35px 100px rgba(0, 0, 0, 0.9),
+      0 0 0 1px rgba(0, 212, 255, 0.4),
+      0 0 60px rgba(0, 212, 255, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+  
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(45deg, transparent 30%, rgba(0, 212, 255, 0.03) 50%, transparent 70%),
+      linear-gradient(-45deg, transparent 30%, rgba(139, 92, 246, 0.03) 50%, transparent 70%);
+    animation: slide-shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes slide-shimmer {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: perspective(1200px) rotateX(-10deg) translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: perspective(1200px) rotateX(0deg) translateY(0);
+    }
+  }
+
+  /* 标题样式 */
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 72px;
+    font-weight: 900;
+    margin: 30px 0;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-cyan) 50%, var(--accent-purple) 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    animation: gradient-shift 4s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .hero-subtitle {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    color: var(--primary-blue);
+    text-align: center;
+    margin: 20px 0;
+    text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+  }
+
+  .hero-slogan {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 24px;
+    color: var(--accent-green);
+    text-align: center;
+    margin: 30px 0;
+    padding: 15px 30px;
+    border: 2px solid rgba(16, 185, 129, 0.3);
+    border-radius: 50px;
+    background: rgba(16, 185, 129, 0.1);
+    display: inline-block;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    margin: 30px 0;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-cyan) 50%, var(--accent-purple) 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+    animation: gradient-shift 4s ease-in-out infinite;
+    position: relative;
+    z-index: 1;
+  }
+
+  h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 36px;
+    font-weight: 700;
+    margin: 30px 0 20px 0;
+    color: var(--text-primary);
+    position: relative;
+    padding-left: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  h2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--primary-blue), var(--accent-purple));
+    border-radius: 3px;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  h3 {
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-green);
+    margin: 25px 0 15px 0;
+    position: relative;
+    padding-left: 20px;
+  }
+
+  h3::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: var(--accent-green);
+    font-size: 20px;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; transform: translateY(-50%) scaleY(1); }
+    50% { opacity: 0.6; transform: translateY(-50%) scaleY(1.2); }
+  }
+
+  p, li {
+    font-size: 20px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    font-weight: 400;
+    margin: 15px 0;
+  }
+
+  .highlight {
+    color: var(--primary-blue);
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+  }
+
+  .accent {
+    color: var(--accent-green);
+    font-weight: 600;
+  }
+
+  /* 列表样式 */
+  ul {
+    margin-left: 40px;
+    list-style: none;
+    padding: 0;
+  }
+
+  ul li {
+    position: relative;
+    padding: 12px 0 12px 40px;
+    margin-bottom: 8px;
+    background: rgba(0, 212, 255, 0.02);
+    border-radius: 12px;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+  }
+
+  ul li:hover {
+    background: rgba(0, 212, 255, 0.08);
+    border-left-color: var(--primary-blue);
+    transform: translateX(8px);
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+  }
+
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(45deg, var(--primary-blue), var(--secondary-cyan));
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes dot-pulse {
+    0%, 100% { transform: translateY(-50%) scale(1); opacity: 1; }
+    50% { transform: translateY(-50%) scale(1.3); opacity: 0.7; }
+  }
+
+  /* 表格样式 */
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 30px;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(0, 212, 255, 0.2);
+    backdrop-filter: blur(10px);
+  }
+  
+  th, td {
+    border: none;
+    padding: 20px 25px;
+    text-align: left;
+    font-size: 18px;
+    position: relative;
+  }
+
+  th {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(139, 92, 246, 0.15) 100%);
+    color: var(--text-primary);
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+  }
+
+  td {
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  tr:hover td {
+    background: rgba(0, 212, 255, 0.05);
+    color: var(--text-primary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* 福利卡片样式 */
+  .benefit-card {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+    border: 2px solid rgba(16, 185, 129, 0.3);
+    border-radius: 20px;
+    padding: 25px;
+    margin: 20px 0;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+  }
+
+  .benefit-card h4 {
+    color: var(--accent-green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    margin: 0 0 15px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .benefit-card h4::before {
+    content: '✅';
+    margin-right: 10px;
+    font-size: 20px;
+  }
+
+  /* 联系信息样式 */
+  .contact-info {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 30px 0;
+    text-align: center;
+  }
+
+  .qr-placeholder {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+    border-radius: 20px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    color: white;
+    font-size: 18px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+    animation: qr-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes qr-glow {
+    0%, 100% { box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4); }
+    50% { box-shadow: 0 15px 40px rgba(139, 92, 246, 0.5); }
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    border-top: 1px solid rgba(0, 212, 255, 0.2);
+    margin-top: 50px;
+  }
+
+  /* 响应式设计 */
+  @media (max-width: 768px) {
+    .slide {
+      margin: 20px;
+      padding: 30px 20px;
+    }
+    
+    .hero-title {
+      font-size: 48px;
+    }
+    
+    h1 {
+      font-size: 36px;
+    }
+    
+    h2 {
+      font-size: 28px;
+    }
+    
+    table {
+      font-size: 14px;
+    }
+    
+    th, td {
+      padding: 15px 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 封面页 -->
+<section class="slide">
+  <div class="center">
+    <div class="hero-title">扣子 AI 工坊</div>
+    <div class="hero-subtitle">"智启未来"校园实践营</div>
+    <div class="hero-slogan">动手做 AI，人人都是智能体开发者！</div>
+    <p style="font-size: 24px; margin-top: 40px; color: var(--primary-blue);">2025年10月15日（周三）14:00 - 17:00</p>
+    <p style="font-size: 20px; color: var(--text-secondary);">预计参与人数：120人</p>
+  </div>
+</section>
+
+<!-- 活动背景 -->
+<section class="slide">
+  <h2>活动背景</h2>
+  <p>随着人工智能技术的迅猛发展，AI 大模型正深刻改变着教育模式与人才培养方式。掌握基于 <span class="highlight">AI Agent</span>（智能代理）的技术能力，已成为当代大学生提升学业效率、增强就业竞争力的关键技能。</p>
+  
+  <p>为帮助高校学生高效掌握前沿 AI 技术，<span class="highlight">字节跳动扣子（Coze）</span> 联合 <span class="highlight">Intel</span> 发起「扣子 AI 工坊」校园专场活动。本次活动聚焦"从0到1的真实校园/职场场景"，通过现场实操教学，引导同学们理解并掌握 AI Agent 相关技能。</p>
+
+  <ul>
+    <li>探索 AI 在学习、生活、科研、创作等多维度的应用场景</li>
+    <li>推动产学融合，打造"玩在一起，学在一起"的科技校园文化</li>
+    <li>零编程基础要求，人人都能参与的AI实践活动</li>
+  </ul>
+</section>
+
+<!-- 主办单位 -->
+<section class="slide">
+  <h2>主办单位</h2>
+  <ul>
+    <li><span class="highlight">主办方</span>：成都星睿棱镜科技有限公司X镜子老头X扣子（Coze）x Intel</li>
+    <li><span class="accent">协办方</span>：[西华大学] 计算机学院/ 创新创业中心</li>
+    <li><span class="accent">支持平台</span>：国家高等教育智慧教育平台</li>
+  </ul>
+</section>
+
+<!-- 活动对象 -->
+<section class="slide">
+  <h2>活动对象</h2>
+  <div class="benefit-card">
+    <h4>参与条件</h4>
+    <ul>
+      <li>全体在校本科生、研究生</li>
+      <li>对人工智能、AI 应用开发、智能体（Agent）技术感兴趣者</li>
+      <li><span class="highlight">无需编程基础</span>，零门槛参与</li>
+      <li>具备基本的计算机操作能力</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 活动流程 -->
+<section class="slide">
+  <h2>活动内容与流程</h2>
+  <table>
+    <tr>
+      <th>时间</th>
+      <th>环节</th>
+      <th>内容说明</th>
+      <th>负责人</th>
+    </tr>
+    <tr>
+      <td>13:30-14:00</td>
+      <td>签到入场</td>
+      <td>扫码签到，领取活动手册 + 扣子定制刮刮卡（可刮出小礼品）</td>
+      <td>志愿者团队</td>
+    </tr>
+    <tr>
+      <td>14:00-14:10</td>
+      <td>开场致辞</td>
+      <td>主持人介绍活动背景、嘉宾及流程</td>
+      <td>主持人</td>
+    </tr>
+    <tr>
+      <td>14:10-14:40</td>
+      <td>主题分享：<br>"什么是 AI Agent？"</td>
+      <td>结合案例讲解 AI Agent 概念、应用场景及扣子平台能力<br>• 展示用扣子做的电影节官网、毕业设计、拍立得生成器等<br>• 演示长文写作、PPT生成、海报设计、数据分析等功能</td>
+      <td>扣子校园大使</td>
+    </tr>
+    <tr>
+      <td>14:40-15:20</td>
+      <td>实战教学：<br>"三步搭建你的第一个 AI 智能体"</td>
+      <td>基于国家高等教育智慧教育平台课程内容，带领学生：<br>1. 创建智能体<br>2. 添加插件能力<br>3. 调试与发布</td>
+      <td>指导讲师</td>
+    </tr>
+    <tr>
+      <td>15:20-15:30</td>
+      <td>茶歇交流</td>
+      <td>提供饮品小食，自由交流，体验扣子空间</td>
+      <td>全体</td>
+    </tr>
+    <tr>
+      <td>15:30-16:30</td>
+      <td>动手挑战赛：<br>"AI 创意 PK 赛"</td>
+      <td>分组任务（任选其一）：<br>• 用扣子空间生成一份"校园音乐节"宣传海报<br>• 用 AI 写一篇"AI 如何改变我的专业学习"主题短文<br>• 用 AI EXCEL 分析一份模拟校园消费数据<br>• 用工作流搭建一个"每日新闻摘要"机器人</td>
+      <td>各小组 + 助教</td>
+    </tr>
+    <tr>
+      <td>16:30-16:50</td>
+      <td>作品展示与评选</td>
+      <td>每组派代表展示成果，评委打分</td>
+      <td>评委团</td>
+    </tr>
+    <tr>
+      <td>16:50-17:00</td>
+      <td>颁奖仪式 & 合影留念</td>
+      <td>颁发奖品、证书，集体合影</td>
+      <td>主持人</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 学生福利 -->
+<section class="slide">
+  <h2>学生参与福利与奖励</h2>
+  <p>每一位参与本次活动的学生，都将获得以下<span class="highlight">多重权益</span>，助力个人成长与职业发展：</p>
+
+  <div class="benefit-card">
+    <h4>实物礼品（人人有份）</h4>
+    <ul>
+      <li><span class="highlight">定制刮刮卡</span>：签到即可领取，100%中奖</li>
+      <li>扣子定制气球、主题手牌、周边贴纸</li>
+      <li>抽奖机会（可中 T 恤、帆布包等）</li>
+    </ul>
+  </div>
+
+  <div class="benefit-card">
+    <h4>专属学习资源</h4>
+    <ul>
+      <li>免费 access 国家高等教育智慧教育平台《<span class="highlight">字节跳动扣子（Coze）AI 智能体与应用搭建实战</span>》课程</li>
+      <li>包含 8 节系统课程：从创建智能体到发布应用，全流程教学</li>
+      <li>扣子官方使用手册 & 实战案例集（电子版）</li>
+    </ul>
+  </div>
+
+  <div class="benefit-card">
+    <h4>荣誉证书</h4>
+    <ul>
+      <li><span class="accent">所有参与者</span>：电子版《"扣子 AI 工坊"实践参与证书》</li>
+      <li><span class="highlight">一等奖（1组）</span>：纸质版《AI Agent 能力认证证书》 + 扣子限量 T 恤 + 显眼包</li>
+      <li><span class="highlight">二等奖（2组）</span>：《AI Agent 能力认证证书》 + 显眼包</li>
+      <li><span class="highlight">三等奖（3组）</span>：《AI Agent 能力认证证书》 + T 恤</li>
+    </ul>
+  </div>
+
+  <div class="benefit-card">
+    <h4>字节跳动优先内推资格</h4>
+    <ul>
+      <li>表现优异者将被推荐进入 <span class="highlight">"字节跳动扣子校园人才库"</span></li>
+      <li>有机会获得 Coze 及字节跳动相关岗位的优先内推资格</li>
+      <li>涵盖：AI 产品实习生、前端/后端开发实习生、AI 应用工程师、校园运营专员</li>
+    </ul>
+  </div>
+
+  <div class="benefit-card">
+    <h4>加入官方社群，拓展人脉</h4>
+    <ul>
+      <li>添加微信「<span class="highlight">扣子Coze</span>」，回复「校园」即可加入官方 AI 学习交流群</li>
+      <li>与全国高校 AI 爱好者、开发者交流，获取最新技术动态与活动信息</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 活动资源支持 -->
+<section class="slide">
+  <h2>活动资源支持</h2>
+  <p>根据本次活动预计 <span class="highlight">120人</span> 规模，扣子将提供以下支持：</p>
+  
+  <table>
+    <tr>
+      <th>支持类别</th>
+      <th>内容明细</th>
+    </tr>
+    <tr>
+      <td>氛围物料</td>
+      <td>横幅 ×1、主海报 ×1、撕条海报 ×1、刮刮卡 ×120、手牌 ×6、气球 ×6</td>
+    </tr>
+    <tr>
+      <td>奖品支持</td>
+      <td>扣子定制 T 恤 ×8 件、显眼包 ×10 个</td>
+    </tr>
+    <tr>
+      <td>教学支持</td>
+      <td>官方培训资料、专属活动链接、后台数据统计</td>
+    </tr>
+    <tr>
+      <td>宣传支持</td>
+      <td>活动结束后，优秀作品将在"扣子空间"官方渠道转发宣传</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 组织分工 -->
+<section class="slide">
+  <h2>组织分工</h2>
+  <table>
+    <tr>
+      <th>姓名</th>
+      <th>职责</th>
+    </tr>
+    <tr>
+      <td>吕昊天</td>
+      <td>总负责人，对接扣子运营，统筹全流程</td>
+    </tr>
+    <tr>
+      <td>林家豪</td>
+      <td>场地协调与设备调试（投影、音响、网络）</td>
+    </tr>
+    <tr>
+      <td>王琦</td>
+      <td>宣传推广（校内公众号、社团群、海报张贴）</td>
+    </tr>
+    <tr>
+      <td>王琦</td>
+      <td>现场签到与物料发放</td>
+    </tr>
+    <tr>
+      <td>林家豪</td>
+      <td>摄影摄像与后期宣传稿撰写</td>
+    </tr>
+    <tr>
+      <td>助教团队（3人）</td>
+      <td>现场指导学生操作，解答问题</td>
+    </tr>
+  </table>
+</section>
+
+<!-- 宣传计划 -->
+<section class="slide">
+  <h2>宣传计划</h2>
+  
+  <h3>前期宣传（活动前1周）</h3>
+  <ul>
+    <li>社团群、班级群转发报名链接</li>
+    <li>线下张贴海报</li>
+  </ul>
+
+  <h3>中期宣传（活动中）</h3>
+  <ul>
+    <li>设置拍照打卡墙，鼓励学生发朋友圈/小红书</li>
+    <li>带话题 <span class="highlight">#扣子AI工坊</span> <span class="highlight">#我的第一个AI智能体</span></li>
+  </ul>
+
+  <h3>后期宣传（活动后3天内）</h3>
+  <ul>
+    <li>撰写活动回顾推文，提交至扣子官方，争取转发</li>
+  </ul>
+</section>
+
+
+<!-- 报名方式 -->
+<section class="slide">
+  <h2>报名方式</h2>
+  <div class="contact-info">
+    <h3>扫码填写报名表，名额有限，先到先得！</h3>
+    
+    <div class="qr-placeholder">
+      报名二维码
+    </div>
+    
+    <p style="font-size: 18px; color: var(--text-secondary);">
+      或复制链接：<br>
+      <span class="highlight">https://bytedance.larkoffice.com/share/base/form/shrcnFk8DLExseI5gMrxwA48lxc</span>
+    </p>
+  </div>
+</section>
+
+<!-- 联系方式 -->
+<section class="slide">
+  <h2>联系方式</h2>
+  <div class="contact-info">
+    <ul style="text-align: left; display: inline-block;">
+      <li>扣子校园运营负责人：[吕昊天]</li>
+      <li>本校联系人：吕昊天 1804357182</li>
+      <li>微信号：关注「<span class="highlight">扣子Coze</span>」，回复「校园」进群咨询</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 结尾 -->
+<section class="slide">
+  <div class="center">
+    <h1 style="font-size: 48px;">让 AI 走进校园</h1>
+    <h1 style="font-size: 48px;">让创意落地生根</h1>
+    <div class="hero-slogan" style="margin-top: 50px;">
+      加入"扣子 AI 工坊"，开启你的智能体开发之旅！
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  © 2025 扣子 AI 工坊 | 智启未来，创新无限
+</div>
+
+</body>
+</html>
